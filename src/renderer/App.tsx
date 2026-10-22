@@ -3,10 +3,16 @@ import { useClipboardStore } from './stores/useClipboardStore';
 import { TitleBar } from './components/TitleBar';
 import { SearchBar } from './features/search/SearchBar';
 import { HistoryList } from './features/history/HistoryList';
-import { DetailModal } from './features/history/DetailModal';
-import { SettingsModal } from './features/settings/SettingsModal';
 import { Toast } from './components/Toast';
 import { QuickAccessView } from './features/quick-access/QuickAccessView';
+
+// Code-split heavy modals to minimize initial bundle size and speed up first render
+const DetailModal = React.lazy(() =>
+  import('./features/history/DetailModal').then((m) => ({ default: m.DetailModal }))
+);
+const SettingsModal = React.lazy(() =>
+  import('./features/settings/SettingsModal').then((m) => ({ default: m.SettingsModal }))
+);
 
 export const App: React.FC = () => {
   const [currentHash, setCurrentHash] = React.useState(
@@ -74,8 +80,10 @@ export const App: React.FC = () => {
       <TitleBar />
       <SearchBar />
       <HistoryList />
-      <DetailModal />
-      <SettingsModal />
+      <React.Suspense fallback={null}>
+        <DetailModal />
+        <SettingsModal />
+      </React.Suspense>
       <Toast />
     </div>
   );

@@ -134,12 +134,10 @@ export class ClipboardMonitor {
       if (readResult.contentType === 'image' && readResult.imageBuffer) {
         const fileName = `${newItemId}.png`;
         imagePath = path.join(getImageStorageDir(), fileName);
-        try {
-          fs.writeFileSync(imagePath, readResult.imageBuffer);
-          content = imagePath;
-        } catch (err) {
-          console.error('Failed to write image file:', err);
-        }
+        content = imagePath;
+        fs.promises.writeFile(imagePath, readResult.imageBuffer).catch((err) => {
+          console.error('Failed to write image file asynchronously:', err);
+        });
       }
 
       const newItem: ClipboardItem = {

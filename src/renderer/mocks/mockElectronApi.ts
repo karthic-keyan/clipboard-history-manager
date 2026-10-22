@@ -281,6 +281,23 @@ export function setupBrowserMockApi(): void {
       };
     },
 
+    getAppMetrics: async () => {
+      return [
+        {
+          pid: 1234,
+          type: 'Browser',
+          cpu: { percentCPUUsage: 0.2, idleWakeupsPerSecond: 10 },
+          memory: { workingSetSize: 42 * 1024, peakWorkingSetSize: 55 * 1024 },
+        },
+        {
+          pid: 5678,
+          type: 'Tab',
+          cpu: { percentCPUUsage: 0.1, idleWakeupsPerSecond: 5 },
+          memory: { workingSetSize: 36 * 1024, peakWorkingSetSize: 48 * 1024 },
+        },
+      ];
+    },
+
     closeWindow: async () => {
       console.log('[Window] closeWindow requested');
     },

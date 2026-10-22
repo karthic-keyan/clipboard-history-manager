@@ -48,6 +48,9 @@ export const IPC_CHANNELS = {
   OPEN_MAIN_WINDOW: 'window:open-main',
   OPEN_EXTERNAL_URL: 'window:open-external-url',
   
+  // App & Metrics
+  GET_APP_METRICS: 'app:get-metrics',
+  
   // Events (Main -> Renderer)
   EVENT_CLIPBOARD_CHANGED: 'event:clipboard-changed',
   EVENT_MONITORING_TOGGLED: 'event:monitoring-toggled',

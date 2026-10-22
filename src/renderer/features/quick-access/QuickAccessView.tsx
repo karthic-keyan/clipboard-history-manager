@@ -155,7 +155,7 @@ export const QuickAccessView: React.FC = () => {
               <span>No clipboard history matches your search.</span>
             </div>
           ) : (
-            items.map((item, idx) => {
+            items.slice(0, 50).map((item, idx) => {
               const isSelected = idx === selectedIndex;
               const isCopied = copiedId === item.id;
 

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useClipboardStore } from '../../stores/useClipboardStore';
 import { ClipboardCard } from './ClipboardCard';
 import { ClipboardItem } from '../../../shared/types';
@@ -35,8 +35,24 @@ export const HistoryList: React.FC = () => {
   const setTypeFilter = useClipboardStore((s) => s.setTypeFilter);
   const setPinnedOnly = useClipboardStore((s) => s.setPinnedOnly);
 
+  // Progressive rendering window to optimize DOM size for hundreds of items
+  const [displayLimit, setDisplayLimit] = useState(40);
+
   // Category collapse state
   const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    setDisplayLimit(40);
+  }, [filter.query, filter.type, filter.pinnedOnly, filter.dateRange, filter.sortBy]);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const target = e.currentTarget;
+    if (target.scrollHeight - target.scrollTop <= target.clientHeight + 250) {
+      if (displayLimit < items.length) {
+        setDisplayLimit((prev) => Math.min(prev + 30, items.length));
+      }
+    }
+  };
 
   const toggleCategory = useCallback((id: string) => {
     setCollapsedCategories((prev) => ({
@@ -200,17 +216,28 @@ export const HistoryList: React.FC = () => {
   // If categorization is disabled, render standard flat list as-is
   if (!settings.group_by_category) {
     return (
-      <div className="flex-1 overflow-y-auto p-4 space-y-2.5">
-        {items.map((item) => (
+      <div
+        onScroll={handleScroll}
+        className="flex-1 overflow-y-auto p-4 space-y-2.5"
+      >
+        {items.slice(0, displayLimit).map((item) => (
           <ClipboardCard key={item.id} item={item} />
         ))}
+        {displayLimit < items.length && (
+          <div className="py-2 text-center text-xs text-neutral-500 select-none">
+            Showing {displayLimit} of {items.length} items (scroll for more)
+          </div>
+        )}
       </div>
     );
   }
 
   // If categorization is enabled, render categorized sections
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-4">
+    <div
+      onScroll={handleScroll}
+      className="flex-1 overflow-y-auto p-4 space-y-4"
+    >
       {/* Category Overview Bar */}
       <div className="flex items-center justify-between px-1 pb-1 text-xs text-neutral-400">
         <div className="flex items-center gap-1.5">
@@ -266,9 +293,14 @@ export const HistoryList: React.FC = () => {
             {/* Category Content Items */}
             {!isCollapsed && (
               <div className="space-y-2.5 pl-2 border-l-2 border-neutral-800/70 ml-2.5 animate-fade-in">
-                {group.items.map((item) => (
+                {group.items.slice(0, displayLimit).map((item) => (
                   <ClipboardCard key={item.id} item={item} />
                 ))}
+                {displayLimit < group.items.length && (
+                  <div className="py-1 text-center text-[11px] text-neutral-500 select-none">
+                    Showing {displayLimit} of {group.items.length} items (scroll for more)
+                  </div>
+                )}
               </div>
             )}
           </div>

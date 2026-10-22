@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useClipboardStore } from '../../stores/useClipboardStore';
-import { AppSettings } from '../../../shared/types';
+import { AppSettings, ProcessMetricInfo } from '../../../shared/types';
 import {
   X,
   Sliders,
@@ -10,6 +10,7 @@ import {
   AlertTriangle,
   Info,
   Laptop,
+  Activity,
 } from 'lucide-react';
 
 export const SettingsModal: React.FC = () => {
@@ -24,11 +25,15 @@ export const SettingsModal: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'general' | 'privacy' | 'storage'>('general');
   const [formData, setFormData] = useState<AppSettings>(settings);
   const [confirmClearOpen, setConfirmClearOpen] = useState(false);
+  const [metrics, setMetrics] = useState<ProcessMetricInfo[]>([]);
 
   useEffect(() => {
     setFormData(settings);
     if (isSettingsOpen) {
       fetchStats();
+      if (window.electronApi?.getAppMetrics) {
+        window.electronApi.getAppMetrics().then(setMetrics).catch(() => {});
+      }
     }
   }, [settings, isSettingsOpen]);
 
@@ -293,6 +298,19 @@ export const SettingsModal: React.FC = () => {
                       {(stats.db_size_bytes / 1024).toFixed(1)} KB
                     </span>
                   </div>
+                </div>
+              )}
+
+              {/* System Process Performance Metrics (Rule 10) */}
+              {metrics.length > 0 && (
+                <div className="p-3 rounded-xl bg-neutral-800/30 border border-neutral-800/80 flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2 text-neutral-300">
+                    <Activity className="w-3.5 h-3.5 text-blue-400" />
+                    <span>Active Process Memory ({metrics.length} {metrics.length === 1 ? 'process' : 'processes'})</span>
+                  </div>
+                  <span className="font-mono text-xs font-semibold text-neutral-200">
+                    {(metrics.reduce((acc, m) => acc + (m.memory?.workingSetSize || 0), 0) / 1024).toFixed(1)} MB Working Set
+                  </span>
                 </div>
               )}
 

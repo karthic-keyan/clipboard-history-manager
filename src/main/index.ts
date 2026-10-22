@@ -11,25 +11,24 @@ import { TrayManager } from './windows/tray';
 import { registerIpcHandlers } from './ipc';
 import { IPC_CHANNELS } from '../shared/constants/defaults';
 
+const startupStart = Date.now();
+
 // Ensure single application instance
 const gotTheLock = app.requestSingleInstanceLock();
 
 if (!gotTheLock) {
   app.quit();
 } else {
-  let db = getDatabase();
-  runMigrations(db);
-
-  const repository = new HistoryRepository(db);
-  const monitor = new ClipboardMonitor(repository);
-  const historyService = new HistoryService(repository, monitor);
-  const retentionService = new RetentionService(repository);
-  const windowManager = new WindowManager(repository);
-
+  let repository: HistoryRepository;
+  let monitor: ClipboardMonitor;
+  let historyService: HistoryService;
+  let retentionService: RetentionService;
+  let windowManager: WindowManager;
   let shortcutManager: ShortcutManager;
   let trayManager: TrayManager;
 
   app.on('second-instance', () => {
+    if (!windowManager) return;
     const mainWin = windowManager.getMainWindow();
     if (mainWin) {
       if (mainWin.isMinimized()) mainWin.restore();
@@ -41,12 +40,17 @@ if (!gotTheLock) {
   });
 
   app.whenReady().then(() => {
-    // Forward monitor items to all active windows
-    monitor.onNewItem((item) => {
-      windowManager.broadcastToAllWindows(IPC_CHANNELS.EVENT_CLIPBOARD_CHANGED, item);
-    });
+    // 1. Initialize database and core dependencies
+    const db = getDatabase();
+    runMigrations(db);
 
-    // Setup shortcuts and tray
+    repository = new HistoryRepository(db);
+    monitor = new ClipboardMonitor(repository);
+    historyService = new HistoryService(repository, monitor);
+    retentionService = new RetentionService(repository);
+    windowManager = new WindowManager(repository);
+
+    // 2. Setup shortcuts and tray handlers
     shortcutManager = new ShortcutManager(repository, () => {
       windowManager.toggleQuickAccess();
     });
@@ -58,29 +62,42 @@ if (!gotTheLock) {
       () => windowManager.toggleQuickAccess()
     );
 
-    trayManager.create();
-    shortcutManager.register();
-
-    // Register IPC channels
+    // 3. Register IPC handlers before window creation
     registerIpcHandlers(historyService, monitor, windowManager, shortcutManager, trayManager);
 
-    // Start retention background cleaner
-    retentionService.start(60);
-
-    // Create Main window
+    // 4. Create and display the main window FIRST for optimal perceived startup time
     windowManager.createMainWindow();
 
-    // Pre-create Quick Access window so it opens instantaneously on shortcut
-    windowManager.createQuickAccessWindow();
+    // 5. Defer non-critical background services to avoid blocking initial window rendering
+    setTimeout(() => {
+      // Forward real-time clipboard change events to windows
+      monitor.onNewItem((item) => {
+        windowManager.broadcastToAllWindows(IPC_CHANNELS.EVENT_CLIPBOARD_CHANGED, item);
+      });
 
-    // Start clipboard monitoring if enabled in settings
-    const settings = repository.getSettings();
-    if (settings.monitoring_enabled) {
-      monitor.start();
-    }
+      // System Tray & Global Shortcuts
+      trayManager.create();
+      shortcutManager.register();
+
+      // Pre-warm Quick Access window in background
+      windowManager.createQuickAccessWindow();
+
+      // Start clipboard monitoring if enabled
+      const settings = repository.getSettings();
+      if (settings.monitoring_enabled) {
+        monitor.start();
+      }
+
+      // Schedule periodic retention cleanup
+      retentionService.start(60);
+
+      const elapsed = Date.now() - startupStart;
+      console.log(`[Startup] Application ready & background services initialized in ${elapsed}ms`);
+    }, 40);
   });
 
   app.on('window-all-closed', () => {
+    if (!repository) return;
     const settings = repository.getSettings();
     // On Windows, keep running in background tray if close_to_tray is true
     if (!settings.close_to_tray) {
@@ -89,15 +106,21 @@ if (!gotTheLock) {
   });
 
   app.on('before-quit', () => {
-    windowManager.setQuitting(true);
+    if (windowManager) {
+      windowManager.setQuitting(true);
+    }
     if (shortcutManager) {
       shortcutManager.unregister();
     }
     if (trayManager) {
       trayManager.destroy();
     }
-    retentionService.stop();
-    monitor.stop();
+    if (retentionService) {
+      retentionService.stop();
+    }
+    if (monitor) {
+      monitor.stop();
+    }
     closeDatabase();
   });
 }

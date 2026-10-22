@@ -64,6 +64,21 @@ export interface ClipboardStats {
   db_size_bytes: number;
 }
 
+export interface ProcessMetricInfo {
+  pid: number;
+  type: string;
+  cpu?: {
+    percentCPUUsage: number;
+    idleWakeupsPerSecond: number;
+  };
+  memory?: {
+    workingSetSize: number;
+    peakWorkingSetSize: number;
+    privateBytes?: number;
+    sharedBytes?: number;
+  };
+}
+
 export interface NativeApi {
   // History operations
   getItems: (filter?: FilterOptions) => Promise<ClipboardItem[]>;
@@ -82,8 +97,9 @@ export interface NativeApi {
   getSettings: () => Promise<AppSettings>;
   updateSettings: (settings: Partial<AppSettings>) => Promise<AppSettings>;
   
-  // Stats
+  // Stats & Performance Metrics
   getStats: () => Promise<ClipboardStats>;
+  getAppMetrics: () => Promise<ProcessMetricInfo[]>;
   
   // Windows & Navigation
   closeWindow: () => Promise<void>;

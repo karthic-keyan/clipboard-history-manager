@@ -21,8 +21,9 @@ const api = {
   updateSettings: (settings: Partial<AppSettings>) =>
     ipcRenderer.invoke(IPC_CHANNELS.UPDATE_SETTINGS, settings),
 
-  // Stats
+  // Stats & Performance Metrics
   getStats: () => ipcRenderer.invoke(IPC_CHANNELS.GET_STATS),
+  getAppMetrics: () => ipcRenderer.invoke(IPC_CHANNELS.GET_APP_METRICS),
 
   // Window Controls
   closeWindow: () => ipcRenderer.invoke(IPC_CHANNELS.WINDOW_CLOSE),

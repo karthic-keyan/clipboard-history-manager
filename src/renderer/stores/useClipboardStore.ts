@@ -51,6 +51,7 @@ interface ClipboardState {
 }
 
 let searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+let toastTimer: ReturnType<typeof setTimeout> | null = null;
 
 export const useClipboardStore = create<ClipboardState>((set, get) => ({
   items: [],
@@ -267,15 +268,24 @@ export const useClipboardStore = create<ClipboardState>((set, get) => ({
   },
 
   showToast: (msg: string) => {
+    if (toastTimer) {
+      clearTimeout(toastTimer);
+      toastTimer = null;
+    }
     set({ toastMessage: msg });
-    setTimeout(() => {
-      if (get().toastMessage === msg) {
-        set({ toastMessage: null });
-      }
+    toastTimer = setTimeout(() => {
+      set({ toastMessage: null });
+      toastTimer = null;
     }, 2200);
   },
 
-  hideToast: () => set({ toastMessage: null }),
+  hideToast: () => {
+    if (toastTimer) {
+      clearTimeout(toastTimer);
+      toastTimer = null;
+    }
+    set({ toastMessage: null });
+  },
   openDetail: (item: ClipboardItem) => set({ activeItemForDetail: item }),
   closeDetail: () => set({ activeItemForDetail: null }),
   openSettings: () => set({ isSettingsOpen: true }),

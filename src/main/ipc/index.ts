@@ -72,6 +72,11 @@ export function registerIpcHandlers(
 
   ipcMain.handle(IPC_CHANNELS.SET_MONITORING, async (_, enabled: boolean) => {
     historyService.updateSettings({ monitoring_enabled: enabled });
+    if (enabled) {
+      monitor.start();
+    } else {
+      monitor.stop();
+    }
     trayManager.updateContextMenu();
     windowManager.broadcastToAllWindows(IPC_CHANNELS.EVENT_MONITORING_TOGGLED, enabled);
     return enabled;
@@ -85,6 +90,20 @@ export function registerIpcHandlers(
   ipcMain.handle(IPC_CHANNELS.UPDATE_SETTINGS, async (_, partialSettings) => {
     try {
       const updated = historyService.updateSettings(partialSettings);
+
+      // Monitoring control
+      if (partialSettings.monitoring_enabled !== undefined) {
+        if (partialSettings.monitoring_enabled) {
+          monitor.start();
+        } else {
+          monitor.stop();
+        }
+      }
+
+      // Polling interval update
+      if (partialSettings.polling_interval !== undefined) {
+        monitor.updateInterval(partialSettings.polling_interval);
+      }
 
       // If global shortcut updated, reregister
       if (partialSettings.global_shortcut) {
@@ -108,9 +127,13 @@ export function registerIpcHandlers(
     }
   });
 
-  // Stats
+  // Stats & Performance Metrics
   ipcMain.handle(IPC_CHANNELS.GET_STATS, async () => {
     return historyService.getStats();
+  });
+
+  ipcMain.handle(IPC_CHANNELS.GET_APP_METRICS, async () => {
+    return app.getAppMetrics();
   });
 
   // Window Controls

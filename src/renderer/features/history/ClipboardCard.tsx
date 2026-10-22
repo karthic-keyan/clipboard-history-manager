@@ -153,6 +153,8 @@ const ClipboardCardComponent: React.FC<Props> = ({ item }) => {
             <img
               src={`file://${item.image_path}`}
               alt="Clipboard image"
+              loading="lazy"
+              decoding="async"
               className="h-20 max-w-[200px] object-cover rounded-lg border border-neutral-700/60 bg-neutral-900/50"
             />
             <div className="flex flex-col text-xs text-neutral-400">

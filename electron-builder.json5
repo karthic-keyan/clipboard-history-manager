@@ -14,7 +14,9 @@
     "dist/**/*",
     "dist-electron/**/*",
     "build/icon.ico",
-    "build/icon.png"
+    "build/icon.png",
+    "!**/*.map",
+    "!**/node_modules/*/{test,tests,example,examples,docs}/**"
   ],
   "asar": true,
   "asarUnpack": [

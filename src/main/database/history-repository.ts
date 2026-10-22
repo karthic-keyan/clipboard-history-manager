@@ -242,13 +242,9 @@ export class HistoryRepository {
     const item = this.getById(id);
     if (!item) return false;
 
-    // Delete image file if exists
-    if (item.image_path && fs.existsSync(item.image_path)) {
-      try {
-        fs.unlinkSync(item.image_path);
-      } catch (err) {
-        console.error('Failed to delete image file:', err);
-      }
+    // Delete image file asynchronously if exists without blocking main loop
+    if (item.image_path) {
+      fs.promises.unlink(item.image_path).catch(() => {});
     }
 
     const res = this.deleteStmt.run(id);
@@ -259,13 +255,10 @@ export class HistoryRepository {
     const selectStmt = preservePinned ? this.selectUnpinnedImagesStmt : this.selectAllImagesStmt;
     const rows = selectStmt.all() as { image_path: string }[];
 
+    // Delete image files asynchronously in parallel
     for (const row of rows) {
-      if (row.image_path && fs.existsSync(row.image_path)) {
-        try {
-          fs.unlinkSync(row.image_path);
-        } catch (err) {
-          console.error('Error removing image file:', err);
-        }
+      if (row.image_path) {
+        fs.promises.unlink(row.image_path).catch(() => {});
       }
     }
 
@@ -288,12 +281,8 @@ export class HistoryRepository {
     const excessRows = this.selectExcessStmt.all(excess) as { id: string; image_path: string | null }[];
 
     for (const r of excessRows) {
-      if (r.image_path && fs.existsSync(r.image_path)) {
-        try {
-          fs.unlinkSync(r.image_path);
-        } catch {
-          // Ignore
-        }
+      if (r.image_path) {
+        fs.promises.unlink(r.image_path).catch(() => {});
       }
     }
 
@@ -316,12 +305,8 @@ export class HistoryRepository {
     const expiredRows = this.selectExpiredStmt.all(cutoff) as { id: string; image_path: string | null }[];
 
     for (const r of expiredRows) {
-      if (r.image_path && fs.existsSync(r.image_path)) {
-        try {
-          fs.unlinkSync(r.image_path);
-        } catch {
-          // Ignore
-        }
+      if (r.image_path) {
+        fs.promises.unlink(r.image_path).catch(() => {});
       }
     }
 

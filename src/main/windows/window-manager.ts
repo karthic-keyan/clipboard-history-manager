@@ -46,15 +46,15 @@ export class WindowManager {
         preload: preloadPath,
         contextIsolation: true,
         nodeIntegration: false,
-        sandbox: false,
+        sandbox: true, // Harden security: enable Chromium sandbox
+        webSecurity: true,
+        backgroundThrottling: true, // Save battery & CPU when window is backgrounded
       },
     });
 
     const isDev = Boolean(process.env.VITE_DEV_SERVER_URL);
     if (isDev) {
       this.mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL!);
-      // Open dev tools in dev mode if requested:
-      // this.mainWindow.webContents.openDevTools({ mode: 'detach' });
     } else {
       this.mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
     }
@@ -72,12 +72,25 @@ export class WindowManager {
       }
     });
 
+    // Dispose reference on closed to prevent memory leaks
+    this.mainWindow.on('closed', () => {
+      this.mainWindow = null;
+    });
+
     this.mainWindow.on('maximize', () => {
       this.mainWindow?.webContents.send(IPC_CHANNELS.EVENT_WINDOW_MAXIMIZE_CHANGED, true);
     });
 
     this.mainWindow.on('unmaximize', () => {
       this.mainWindow?.webContents.send(IPC_CHANNELS.EVENT_WINDOW_MAXIMIZE_CHANGED, false);
+    });
+
+    // Navigation security: prevent in-window browsing to external links
+    this.mainWindow.webContents.on('will-navigate', (event, url) => {
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        event.preventDefault();
+        shell.openExternal(url);
+      }
     });
 
     this.mainWindow.webContents.setWindowOpenHandler(({ url }) => {
@@ -107,12 +120,14 @@ export class WindowManager {
       resizable: false,
       show: false,
       icon: path.join(app.getAppPath(), 'build', 'icon.png'),
-      backgroundColor: '#00000000', // Fully transparent container for acrylic rounded shadow
+      backgroundColor: '#00000000',
       webPreferences: {
         preload: preloadPath,
         contextIsolation: true,
         nodeIntegration: false,
-        sandbox: false,
+        sandbox: true, // Harden security: enable Chromium sandbox
+        webSecurity: true,
+        backgroundThrottling: true,
       },
     });
 
@@ -131,6 +146,25 @@ export class WindowManager {
         this.quickAccessWindow.hide();
         this.quickAccessWindow.webContents.send(IPC_CHANNELS.EVENT_QUICK_ACCESS_VISIBILITY, false);
       }
+    });
+
+    // Dispose reference on closed to prevent memory leaks
+    this.quickAccessWindow.on('closed', () => {
+      this.quickAccessWindow = null;
+    });
+
+    this.quickAccessWindow.webContents.on('will-navigate', (event, url) => {
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        event.preventDefault();
+        shell.openExternal(url);
+      }
+    });
+
+    this.quickAccessWindow.webContents.setWindowOpenHandler(({ url }) => {
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        shell.openExternal(url);
+      }
+      return { action: 'deny' };
     });
 
     return this.quickAccessWindow;
