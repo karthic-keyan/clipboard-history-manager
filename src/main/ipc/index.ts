@@ -5,7 +5,7 @@ import { WindowManager } from '../windows/window-manager';
 import { ShortcutManager } from '../windows/shortcuts';
 import { TrayManager } from '../windows/tray';
 import { IPC_CHANNELS } from '../../shared/constants/defaults';
-import { FilterOptionsSchema, AppSettingsSchema } from '../../shared/schemas/settings';
+import { FilterOptionsSchema } from '../../shared/schemas/settings';
 
 export function registerIpcHandlers(
   historyService: HistoryService,

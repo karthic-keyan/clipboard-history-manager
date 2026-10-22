@@ -6,7 +6,6 @@ import {
   Square,
   X,
   Settings,
-  ShieldCheck,
   Pause,
   Play,
   Sparkles,

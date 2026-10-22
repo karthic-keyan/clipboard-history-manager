@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app } from 'electron';
 import { getDatabase, closeDatabase } from './database/connection';
 import { runMigrations } from './database/migrations';
 import { HistoryRepository } from './database/history-repository';

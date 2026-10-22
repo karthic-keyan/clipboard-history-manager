@@ -6,7 +6,6 @@ import {
   Check,
   Star,
   Trash2,
-  ExternalLink,
   Lock,
   Eye,
   EyeOff,

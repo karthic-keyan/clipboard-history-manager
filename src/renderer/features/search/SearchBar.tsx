@@ -9,7 +9,6 @@ import {
   Code2,
   Link2,
   Image as ImageIcon,
-  SlidersHorizontal,
   Layers,
   Sparkles,
   FolderTree,

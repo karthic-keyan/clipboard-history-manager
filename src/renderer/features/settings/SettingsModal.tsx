@@ -7,14 +7,9 @@ import {
   Shield,
   Database,
   Trash2,
-  Check,
   AlertTriangle,
   Info,
   Laptop,
-  Clock,
-  Sparkles,
-  KeyRound,
-  EyeOff,
 } from 'lucide-react';
 
 export const SettingsModal: React.FC = () => {

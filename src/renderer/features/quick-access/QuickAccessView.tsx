@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useClipboardStore } from '../../stores/useClipboardStore';
 import {
   Search,
-  Copy,
   Check,
   Star,
   ExternalLink,
@@ -11,8 +10,6 @@ import {
   FileText,
   Image as ImageIcon,
   Lock,
-  ArrowUpDown,
-  CornerDownLeft,
 } from 'lucide-react';
 
 export const QuickAccessView: React.FC = () => {

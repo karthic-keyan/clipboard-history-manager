@@ -1,4 +1,4 @@
-import { Tray, Menu, nativeImage, app, BrowserWindow } from 'electron';
+import { Tray, Menu, nativeImage, app } from 'electron';
 import fs from 'fs';
 import path from 'path';
 import { HistoryService } from '../services/history-service';

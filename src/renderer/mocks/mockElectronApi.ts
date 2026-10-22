@@ -2,7 +2,6 @@ import {
   ClipboardItem,
   FilterOptions,
   AppSettings,
-  ClipboardStats,
   NativeApi,
 } from '../../shared/types';
 import { DEFAULT_SETTINGS } from '../../shared/constants/defaults';

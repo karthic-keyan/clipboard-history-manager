@@ -8,12 +8,7 @@ import {
   Trash2,
   Lock,
   ExternalLink,
-  Code2,
-  FileText,
-  Link2,
-  Image as ImageIcon,
   WrapText,
-  Hash,
 } from 'lucide-react';
 
 export const DetailModal: React.FC = () => {

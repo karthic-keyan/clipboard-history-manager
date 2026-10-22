@@ -30,12 +30,12 @@ export class ClipboardMonitor {
     return this.isRunning;
   }
 
-  public start(): void {
+  public start(overrideInterval?: number): void {
     if (this.isRunning) return;
     this.isRunning = true;
 
     const settings = this.repository.getSettings();
-    const interval = Math.max(200, settings.polling_interval || 500);
+    const interval = Math.max(200, overrideInterval || settings.polling_interval || 500);
 
     // Initial check without triggering callback to prime the lastHash
     const initialRead = readCurrentClipboard('init', {
@@ -62,10 +62,10 @@ export class ClipboardMonitor {
     }
   }
 
-  public updateInterval(newIntervalMs: number): void {
+  public updateInterval(newIntervalMs?: number): void {
     if (this.isRunning) {
       this.stop();
-      this.start();
+      this.start(newIntervalMs);
     }
   }
 
