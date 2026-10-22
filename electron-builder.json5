@@ -1,0 +1,59 @@
+/**
+ * @type {import('electron-builder').Configuration}
+ * @see https://www.electron.build/configuration/configuration
+ */
+{
+  "appId": "com.clipboardhistorymanager.desktop",
+  "productName": "Clipboard History Manager",
+  "copyright": "Copyright © 2026",
+  "directories": {
+    "output": "release",
+    "buildResources": "build"
+  },
+  "files": [
+    "dist/**/*",
+    "dist-electron/**/*",
+    "build/icon.ico",
+    "build/icon.png"
+  ],
+  "asar": true,
+  "asarUnpack": [
+    "**/node_modules/better-sqlite3/**/*"
+  ],
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": ["x64"]
+      },
+      {
+        "target": "portable",
+        "arch": ["x64"]
+      }
+    ],
+    "icon": "build/icon.ico"
+  },
+  "nsis": {
+    "oneClick": false,
+    "perMachine": false,
+    "allowToChangeInstallationDirectory": true,
+    "deleteAppDataOnUninstall": false,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true,
+    "shortcutName": "Clipboard History Manager",
+    "license": "build/license.txt",
+    "installerIcon": "build/icon.ico",
+    "uninstallerIcon": "build/icon.ico",
+    "installerHeaderIcon": "build/icon.ico"
+  },
+  "appx": {
+    "applicationId": "ClipboardHistoryManager",
+    "identityName": "ClipboardHistoryManager",
+    "publisher": "CN=YOUR-PUBLISHER-ID",
+    "publisherDisplayName": "Your Publisher Name",
+    "displayName": "Clipboard History Manager",
+    "backgroundColor": "#0f172a",
+    "showNameOnTiles": true,
+    "languages": ["en-US"]
+  }
+}

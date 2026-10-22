@@ -1,0 +1,44 @@
+END USER LICENSE AND INSTALLATION AGREEMENT
+Clipboard History Manager for Windows
+Version 1.0
+
+IMPORTANT: PLEASE READ THIS SOFTWARE LICENSE AGREEMENT ("AGREEMENT") CAREFULLY BEFORE INSTALLING OR USING THE CLIPBOARD HISTORY MANAGER APPLICATION ("SOFTWARE"). BY CLICKING "I AGREE" OR PROCEEDING WITH THE INSTALLATION, YOU AGREE TO BE BOUND BY THE TERMS OF THIS AGREEMENT.
+
+1. LICENSE GRANT
+The Software is provided to you free of charge for personal, educational, and commercial desktop use. You are granted a non-exclusive, non-transferable, revocable license to install, run, and use the Software on devices running supported versions of Microsoft Windows.
+
+2. LOCAL DATA STORAGE AND PRIVACY COMMITMENT
+(a) 100% Offline Architecture: The Software operates entirely on your local machine. Copied clipboard content, search indexes, application preferences, and temporary visual thumbnails are stored exclusively in your local user data directory in an embedded SQLite database.
+(b) Zero Cloud Telemetry: The Software does not transmit, upload, replicate, or synchronize your clipboard history or keystrokes to any remote server, third-party analytics service, or cloud infrastructure.
+(c) Local Control: You retain full ownership and control over all stored clipboard records. You may pause clipboard monitoring, delete individual records, or purge the entire local history at any time.
+
+3. SENSITIVE DATA PROTECTION AND HEURISTIC DETECTION
+(a) The Software includes automated heuristics designed to recognize certain patterns of sensitive data, including API keys, tokens, credit card sequences, and verification codes.
+(b) You acknowledge that automated heuristic detection cannot guarantee the identification or protection of all confidential, proprietary, or personal information. 
+(c) You are strongly advised to utilize the provided "Pause Monitoring", "Ignore Sensitive Content", and "Mask Passwords" features when handling confidential credentials.
+
+4. USER RESPONSIBILITIES
+You are solely responsible for:
+(a) Managing the security of your Windows device, user account, and local file storage.
+(b) Ensuring that content captured from your clipboard does not violate applicable laws, regulations, confidentiality obligations, or third-party rights.
+(c) Regularly reviewing your configured retention limits and database storage thresholds.
+
+5. RESTRICTIONS
+You may not:
+(a) Reverse engineer, decompile, or disassemble the Software, except to the extent permitted by applicable law.
+(b) Use the Software to conduct unauthorized monitoring or surveillance of another person's device.
+(c) Rent, lease, sublicense, or distribute the Software without proper attribution.
+
+6. DISCLAIMER OF WARRANTIES
+THE SOFTWARE IS PROVIDED "AS IS" AND "AS AVAILABLE", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, ACCURACY, AND NON-INFRINGEMENT. THE AUTHORS AND COPYRIGHT HOLDERS DO NOT WARRANT THAT THE SOFTWARE WILL BE UNINTERRUPTED, ERROR-FREE, OR FREE FROM DATA LOSS.
+
+7. LIMITATION OF LIABILITY
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL THE AUTHORS, DEVELOPERS, OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES (INCLUDING, BUT NOT LIMITED TO, LOSS OF DATA, LOSS OF PROFITS, BUSINESS INTERRUPTION, OR SYSTEM DAMAGE) ARISING OUT OF OR IN CONNECTION WITH THE USE OR INABILITY TO USE THE SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+8. UNINSTALLATION AND REMOVAL
+You may uninstall the Software at any time using Windows Settings > Installed Apps or by running the uninstaller executable. Uninstallation will remove application binaries. You can choose whether to retain or delete your local clipboard database file located in your AppData directory.
+
+9. ENTIRE AGREEMENT
+This Agreement constitutes the complete agreement between you and the developers regarding the Software and supersedes any prior representations or agreements.
+
+BY CLICKING "I AGREE", YOU CONFIRM THAT YOU HAVE READ, UNDERSTOOD, AND ACCEPT THE TERMS OF THIS AGREEMENT.
